@@ -4,7 +4,13 @@
 #include "MyCharacter.h"
 #include "ProjectActor.h"
 #include "Item.h"
-
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+#include "Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -33,6 +39,24 @@ AMyCharacter::AMyCharacter()
 	CollectCollisionComp->AttachTo(RootComponent);
 
 	GetCharacterMovement()->MaxWalkSpeed = 400;
+
+	ConstructorHelpers::FClassFinder<UUserWidget>
+		Widget(TEXT("WidgetBlueprint'/Game/Blueprints/Pause.Pause_C'"));
+	if (Widget.Succeeded()) {
+		UserWidget = Widget.Class;
+	}
+
+
+	ConstructorHelpers::FObjectFinder<USoundCue>
+		SoundCue(TEXT("SoundCue'/Game/Audios/shoot_Cue.shoot_Cue'"));
+	if (SoundCue.Succeeded()) {
+		FireSound = SoundCue.Object;
+	}
+
+	AudioComp = CreateDefaultSubobject<UAudioComponent>
+		(TEXT("AudioComp"));
+	AudioComp->bAutoActivate = false;
+	AudioComp->AttachTo(GetMesh());
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -76,7 +100,7 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 	InputComponent->BindAction("Drop", IE_Pressed, this, &AMyCharacter::DropProjectActor);
 	InputComponent->BindAction("Collect", IE_Pressed, this, &AMyCharacter::OnCollect);
 	 
-
+	InputComponent->BindAction("Pause", IE_Pressed, this, &AMyCharacter::Pause);
 
 }
 
@@ -149,6 +173,8 @@ void AMyCharacter::DropProjectActor() {
 		AProjectActor* proj = World->SpawnActor<AProjectActor>(GetActorLocation(), Rotator, SpawnParameters);
 		if (proj != nullptr) {
 			UE_LOG(LogTemp, Warning, TEXT("Span ok!"));
+			AudioComp->SetSound(FireSound);
+			AudioComp->Play();
 		}
 	}
 
@@ -173,6 +199,25 @@ void AMyCharacter::OnCollect() {
 			Inventory.Add(ItemColetado);
 			ItemColetado->Destroy();
 			UE_LOG(LogTemp, Warning, TEXT("%d"), Inventory.Num());
+		}
+	}
+}
+
+void AMyCharacter::Pause() {
+	UWorld* World = GetWorld();
+	if (World != nullptr) {
+		APlayerController* PlayerController =
+			UGameplayStatics::GetPlayerController(World, 0);
+		if (PlayerController != nullptr && UserWidget != NULL) {
+			PlayerController->SetPause(true);
+			UUserWidget* UserW =
+				UWidgetBlueprintLibrary::Create
+				(World, UserWidget, PlayerController);
+			if (UserW != nullptr) {
+				UserW->AddToViewport();
+				PlayerController->bShowMouseCursor = true;
+			}
+
 		}
 	}
 }

@@ -54,6 +54,10 @@ private:
 
 	USphereComponent* CollectCollisionComp;
 	TArray<class AItem*> Inventory;
+	TSubclassOf<class UUserWidget> UserWidget;
+
+	USoundCue* FireSound;
+	UAudioComponent* AudioComp;
 
 
 
@@ -65,7 +69,7 @@ private:
 	void DropProjectActor();
 	void Turn(float Value);
 	void OnCollect();
-
+	void Pause();
 
 	
 };
