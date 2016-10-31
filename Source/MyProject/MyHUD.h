@@ -13,7 +13,16 @@ class MYPROJECT_API AMyHUD : public AHUD
 {
 	GENERATED_BODY()
 	
-	
-	
-	
+
+public:
+	AMyHUD();
+
+	UPROPERTY(EditAnywhere)
+		UFont* HUDFont;
+	UPROPERTY(EditAnywhere)
+		UTexture2D* MyTexture;
+
+	virtual void DrawHUD() override;
+
+
 };
