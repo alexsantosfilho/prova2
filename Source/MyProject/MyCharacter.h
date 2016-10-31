@@ -27,6 +27,10 @@ public:
 	
 	void SetLife(int NewLife);
 	int GetLife();
+	
+	FORCEINLINE int GetNewLife() const { return Life; }
+	FORCEINLINE void AMyCharacter::SetNewLife(int NewLife) { Life = NewLife; }
+	FORCEINLINE TArray<class AItem*> GetInventory() const { return Inventory; }
 	void OnDeath();
 
 
@@ -48,6 +52,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	int Life = 100;
 
+	USphereComponent* CollectCollisionComp;
+	TArray<class AItem*> Inventory;
+
 
 
 	void MoveForward(float value);
@@ -57,7 +64,7 @@ private:
 	void StopRun();
 	void DropProjectActor();
 	void Turn(float Value);
-
+	void OnCollect();
 
 
 	

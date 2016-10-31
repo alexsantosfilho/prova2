@@ -3,6 +3,7 @@
 #include "MyProject.h"
 #include "MyCharacter.h"
 #include "ProjectActor.h"
+#include "Item.h"
 
 
 // Sets default values
@@ -27,6 +28,9 @@ AMyCharacter::AMyCharacter()
 	ArrowComp->ArrowSize = 2.0f;
 	ArrowComp->AttachTo(MeshComp);
 
+	CollectCollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollectCollision"));
+	CollectCollisionComp->InitSphereRadius(200.0f);
+	CollectCollisionComp->AttachTo(RootComponent);
 
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 
@@ -70,7 +74,7 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 	InputComponent->BindAction("Run", IE_Released, this, &AMyCharacter::StopRun);
 
 	InputComponent->BindAction("Drop", IE_Pressed, this, &AMyCharacter::DropProjectActor);
-
+	InputComponent->BindAction("Collect", IE_Pressed, this, &AMyCharacter::OnCollect);
 	 
 
 
@@ -157,4 +161,18 @@ void AMyCharacter::Turn(float Value) {
 	MeshComp->SetWorldRotation(NewRotation);
 
 
+}
+
+void AMyCharacter::OnCollect() {
+	TArray<AActor*> AtoresColetados;
+	CollectCollisionComp->GetOverlappingActors(AtoresColetados);
+
+	for (int i = 0; i < AtoresColetados.Num(); i++) {
+		if (AtoresColetados[i]->IsA(AItem::StaticClass())) {
+			AItem* ItemColetado = Cast<AItem>(AtoresColetados[i]);
+			Inventory.Add(ItemColetado);
+			ItemColetado->Destroy();
+			UE_LOG(LogTemp, Warning, TEXT("%d"), Inventory.Num());
+		}
+	}
 }
