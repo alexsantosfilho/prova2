@@ -11,6 +11,8 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/UserWidget.h"
+#include "Alavanca.h"
+
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -47,7 +49,6 @@ AMyCharacter::AMyCharacter()
 		UserWidget = Widget.Class;
 	}
 
-
 	ConstructorHelpers::FObjectFinder<USoundCue>
 		SoundCue(TEXT("SoundCue'/Game/Audios/shoot_Cue.shoot_Cue'"));
 	if (SoundCue.Succeeded()) {
@@ -71,6 +72,7 @@ AMyCharacter::AMyCharacter()
 	if (AnimJumpLoad2.Succeeded()) {
 		JumpAnim2 = AnimJumpLoad2.Object;
 	}
+	
 	AudioComp = CreateDefaultSubobject<UAudioComponent>
 		(TEXT("AudioComp"));
 	AudioComp->bAutoActivate = false;
@@ -106,14 +108,13 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 	Super::SetupPlayerInputComponent(InputComponent);
 
 	InputComponent->BindAxis("MoveForward", this, &AMyCharacter::MoveForward);
+	
 	InputComponent->BindAxis("MoveRight", this, &AMyCharacter::MoveRight);
+	
 	InputComponent->BindAxis("Turn", this, &AMyCharacter::Turn);
-
-
 
 	InputComponent->BindAxis("MouseX", this, &AMyCharacter::RotacionarEmZ);
 	InputComponent->BindAxis("MouseY", this, &AMyCharacter::RotacionarEmX);
-
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &AMyCharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -126,7 +127,7 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 
 	InputComponent->BindAction("Drop", IE_Pressed, this, &AMyCharacter::DropProjectActor);
 	InputComponent->BindAction("Collect", IE_Pressed, this, &AMyCharacter::OnCollect);
-	 
+
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AMyCharacter::Pause);
 
 }
@@ -136,57 +137,60 @@ void AMyCharacter::MoveForward(float value) {
 	FVector Forward(1, 0, 0);
 	AddMovementInput(Forward, value);
 
-
-
-
 }
 void AMyCharacter::MoveRight(float value) {
 
 	FVector Right(0, 1, 0);
 	AddMovementInput(Right, value);
 
-
-
-
 }
 
 void AMyCharacter::RotacionarEmZ(float eixoHorizontal) {
+
 	FRotator rotAtual = GetActorRotation();
 	FRotator eixoZ = FRotator::MakeFromEuler(FVector(0, 0, 1));
 	SetActorRotation(rotAtual + (eixoZ * eixoHorizontal *velocidadeDeRotacao));
+
 }
 
 void AMyCharacter::RotacionarEmX(float eixoHorizontal) {
+
 	FRotator rotAtual = GetActorRotation();
 	FRotator eixoX = FRotator::MakeFromEuler(FVector(0, 1, 0));
 	SetActorRotation(rotAtual + (eixoX * eixoHorizontal *velocidadeDeRotacao));
+
 }
 
-
-
 void AMyCharacter::StartRun() {
+
 	GetCharacterMovement()->MaxWalkSpeed = 800;
 
 }
 void AMyCharacter::StopRun() {
+
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 
 }
 
 void AMyCharacter::SetLife(int NewLife) {
+
 	Life = NewLife;
 
 }
 int AMyCharacter::GetLife() {
+
 	return Life;
+
 }
 
 void AMyCharacter::OnDeath() {
+
 	if (Life <= 0) {
 		FVector InitialLocation(-60.0f, 30.0f, 350.0f);
 		Life = 100;
 		SetActorLocation(InitialLocation);
 	}
+
 }
 
 
@@ -208,15 +212,16 @@ void AMyCharacter::DropProjectActor() {
 }
 
 void AMyCharacter::Turn(float Value) {
+
 	//AddControllerYawInput(Value);
 	FRotator NewRotation = MeshComp->GetComponentRotation();
 	NewRotation.Yaw += Value;
 	MeshComp->SetWorldRotation(NewRotation);
 
-
 }
 
 void AMyCharacter::OnCollect() {
+
 	TArray<AActor*> AtoresColetados;
 	CollectCollisionComp->GetOverlappingActors(AtoresColetados);
 
@@ -227,10 +232,16 @@ void AMyCharacter::OnCollect() {
 			ItemColetado->Destroy();
 			UE_LOG(LogTemp, Warning, TEXT("%d"), Inventory.Num());
 		}
+		else if (AtoresColetados[i]->IsA(AAlavanca::StaticClass())) {
+			AAlavanca* Alavanca = Cast<AAlavanca>(AtoresColetados[i]);
+			Alavanca->OnPressed();
+		
+		}
 	}
 }
 
 void AMyCharacter::Pause() {
+
 	UWorld* World = GetWorld();
 	if (World != nullptr) {
 		APlayerController* PlayerController =
@@ -244,32 +255,25 @@ void AMyCharacter::Pause() {
 				UserW->AddToViewport();
 				PlayerController->bShowMouseCursor = true;
 			}
-
 		}
 	}
 }
 
 void AMyCharacter::Jump() {
+
 	Super::Jump();
 
 	if (JumpAnim != nullptr) {
 		GetMesh()->PlayAnimation(JumpAnim, false);
 	}
-
-	else if (JumpAnim ==  nullptr) {
-
-		MoveForward(true);
-
-	}
 }
 
-void AMyCharacter::Crouch(bool bClientSimulation)
-{
+void AMyCharacter::Crouch(bool bClientSimulation) {
+
 	Super::Crouch();
 	if (JumpAnim2 != nullptr) {
 		GetMesh()->PlayAnimation(JumpAnim2, false);
 	}
-
 }
 
 void AMyCharacter::StartCrouch()
@@ -280,5 +284,6 @@ void AMyCharacter::StartCrouch()
 void AMyCharacter::StopCrouch()
 {
 	UnCrouch();
+
 }
 
