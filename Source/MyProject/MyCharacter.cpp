@@ -39,6 +39,7 @@ AMyCharacter::AMyCharacter()
 	CollectCollisionComp->AttachTo(RootComponent);
 
 	GetCharacterMovement()->MaxWalkSpeed = 400;
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	ConstructorHelpers::FClassFinder<UUserWidget>
 		Widget(TEXT("WidgetBlueprint'/Game/Blueprints/Pause.Pause_C'"));
@@ -53,6 +54,23 @@ AMyCharacter::AMyCharacter()
 		FireSound = SoundCue.Object;
 	}
 
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>
+		SkeletalMesh(TEXT("SkeletalMesh'/Game/AnimStarterPack/UE4_Mannequin/Mesh/SK_Mannequin.SK_Mannequin'"));
+	if (SkeletalMesh.Succeeded()) {
+		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);
+	}
+
+	ConstructorHelpers::FObjectFinder<UAnimSequence>
+		AnimJumpLoad(TEXT("AnimSequence'/Game/AnimStarterPack/Jump_From_Stand.Jump_From_Stand'"));
+	if (AnimJumpLoad.Succeeded()) {
+		JumpAnim = AnimJumpLoad.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UAnimSequence>
+		AnimJumpLoad2(TEXT("AnimSequence'/Game/AnimStarterPack/Crouch_Idle_Rifle_Ironsights.Crouch_Idle_Rifle_Ironsights'"));
+	if (AnimJumpLoad2.Succeeded()) {
+		JumpAnim2 = AnimJumpLoad2.Object;
+	}
 	AudioComp = CreateDefaultSubobject<UAudioComponent>
 		(TEXT("AudioComp"));
 	AudioComp->bAutoActivate = false;
@@ -74,6 +92,12 @@ void AMyCharacter::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	if (GetMesh()->GetAnimationMode() == EAnimationMode::AnimationSingleNode
+		&& GetCharacterMovement()->IsMovingOnGround() && CanCrouch()== true)   { 
+		GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	}
+
 }
 
 // Called to bind functionality to input
@@ -91,8 +115,11 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 	InputComponent->BindAxis("MouseY", this, &AMyCharacter::RotacionarEmX);
 
 
-	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	InputComponent->BindAction("Jump", IE_Pressed, this, &AMyCharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	InputComponent->BindAction("Crouch", IE_Pressed, this, &AMyCharacter::StartCrouch);
+	InputComponent->BindAction("Crouch", IE_Released, this, &AMyCharacter::StopCrouch);
 
 	InputComponent->BindAction("Run", IE_Pressed, this, &AMyCharacter::StartRun);
 	InputComponent->BindAction("Run", IE_Released, this, &AMyCharacter::StopRun);
@@ -221,3 +248,37 @@ void AMyCharacter::Pause() {
 		}
 	}
 }
+
+void AMyCharacter::Jump() {
+	Super::Jump();
+
+	if (JumpAnim != nullptr) {
+		GetMesh()->PlayAnimation(JumpAnim, false);
+	}
+
+	else if (JumpAnim ==  nullptr) {
+
+		MoveForward(true);
+
+	}
+}
+
+void AMyCharacter::Crouch(bool bClientSimulation)
+{
+	Super::Crouch();
+	if (JumpAnim2 != nullptr) {
+		GetMesh()->PlayAnimation(JumpAnim2, false);
+	}
+
+}
+
+void AMyCharacter::StartCrouch()
+{
+	Crouch();
+}
+
+void AMyCharacter::StopCrouch()
+{
+	UnCrouch();
+}
+

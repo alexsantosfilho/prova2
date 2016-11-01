@@ -37,6 +37,14 @@ public:
 	void RotacionarEmZ(float eixoHorizontal);
 	void RotacionarEmX(float eixoVertical);
 	
+	virtual void Jump() override;
+
+	virtual void Crouch(bool bClientSimulation = true) override;
+
+	void StartCrouch();
+	void StopCrouch();
+
+
 	
 private: 
 	UPROPERTY(EditAnywhere)
@@ -59,7 +67,11 @@ private:
 	USoundCue* FireSound;
 	UAudioComponent* AudioComp;
 
+	UPROPERTY(EditAnywhere)
+		UAnimSequence* JumpAnim;
 
+	UPROPERTY(EditAnywhere)
+		UAnimSequence* JumpAnim2;
 
 	void MoveForward(float value);
 	void MoveRight(float Value);
