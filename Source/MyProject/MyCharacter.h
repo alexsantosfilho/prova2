@@ -31,6 +31,8 @@ public:
 	FORCEINLINE int GetNewLife() const { return Life; }
 	FORCEINLINE void AMyCharacter::SetNewLife(int NewLife) { Life = NewLife; }
 	FORCEINLINE TArray<class AItem*> GetInventory() const { return Inventory; }
+	FORCEINLINE TArray<class AObjeto*> GetColetavel() const { return Coletavel; }
+
 	void OnDeath();
 
 
@@ -61,7 +63,11 @@ private:
 	int Life = 100;
 
 	USphereComponent* CollectCollisionComp;
+	USphereComponent* CollectCollisionComp2;
+
 	TArray<class AItem*> Inventory;
+	TArray<class AObjeto*> Coletavel;
+
 	TSubclassOf<class UUserWidget> UserWidget;
 
 	USoundCue* FireSound;
@@ -83,6 +89,7 @@ private:
 	void DropProjectActor();
 	void Turn(float Value);
 	void OnCollect();
+	void OnCollect2();
 	void Pause();
 
 	

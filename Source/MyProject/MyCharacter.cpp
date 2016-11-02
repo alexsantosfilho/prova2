@@ -4,6 +4,7 @@
 #include "MyCharacter.h"
 #include "ProjectActor.h"
 #include "Item.h"
+#include "Objeto.h"
 #include "Runtime/UMG/Public/UMG.h"
 #include "Runtime/UMG/Public/UMGStyle.h"
 #include "Runtime/UMG/Public/IUMGModule.h"
@@ -133,6 +134,8 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 
 	InputComponent->BindAction("Drop", IE_Pressed, this, &AMyCharacter::DropProjectActor);
 	InputComponent->BindAction("Collect", IE_Pressed, this, &AMyCharacter::OnCollect);
+	InputComponent->BindAction("Collect2", IE_Pressed, this, &AMyCharacter::OnCollect2);
+
 
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AMyCharacter::Pause);
 
@@ -245,6 +248,26 @@ void AMyCharacter::OnCollect() {
 			Alavanca->OnPressed();
 		
 		}
+	}
+}
+
+
+void AMyCharacter::OnCollect2() {
+
+	TArray<AActor*> Coletavelb;
+	CollectCollisionComp->GetOverlappingActors(Coletavelb);
+//	UE_LOG(LogTemp, Warning, TEXT("OnCollect2"));
+		for (int i = 0; i < Coletavelb.Num(); i++) {
+			//UE_LOG(LogTemp, Warning, TEXT("OnCollect2"));
+		if (Coletavelb[i]->IsA(AObjeto::StaticClass())) {
+			UE_LOG(LogTemp, Warning, TEXT("OnCollect2"));
+			AObjeto* ObColetado = Cast<AObjeto>(Coletavelb[i]);
+			Coletavel.Add(ObColetado);
+			ObColetado->Destroy();
+			UE_LOG(LogTemp, Warning, TEXT("%d"), Coletavel.Num());
+			
+		}
+	
 	}
 }
 

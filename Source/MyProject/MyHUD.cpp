@@ -46,6 +46,10 @@ void AMyHUD::DrawHUD() {
 	DrawText(PotionAmount, FColor::Red, ScreenDimensions.X - Potion->GetSizeX(),
 		50, HUDFont);
 
+	FString PotionAmount2 = FString::Printf(TEXT("X %d"), MyCharacter->GetColetavel().Num());
+	DrawText(PotionAmount2, FColor::Blue, ScreenDimensions.X - Potion->GetSizeX(),
+		100, HUDFont);
+
 
 	/*DrawTextureSimple(MyTexture, 200, 50, 1.0f, false);
 
