@@ -13,6 +13,8 @@
 #include "Runtime/UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "Alavanca.h"
+#include "Alavanca2.h"
+
 
 
 // Sets default values
@@ -135,6 +137,7 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 	InputComponent->BindAction("Drop", IE_Pressed, this, &AMyCharacter::DropProjectActor);
 	InputComponent->BindAction("Collect", IE_Pressed, this, &AMyCharacter::OnCollect);
 	InputComponent->BindAction("Collect2", IE_Pressed, this, &AMyCharacter::OnCollect2);
+	InputComponent->BindAction("PressChave2", IE_Pressed, this, &AMyCharacter::PressChave2);
 
 
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AMyCharacter::Pause);
@@ -251,6 +254,18 @@ void AMyCharacter::OnCollect() {
 	}
 }
 
+void AMyCharacter::PressChave2() {
+	
+	TArray<AActor*> AtoresColetados;
+	CollectCollisionComp->GetOverlappingActors(AtoresColetados);
+	
+	for (int i = 0; i < AtoresColetados.Num(); i++) {
+		if (AtoresColetados[i]->IsA(AAlavanca2::StaticClass())) {
+			AAlavanca2* Alavanca2 = Cast<AAlavanca2>(AtoresColetados[i]);
+			Alavanca2->OnPressed2();
+		}
+	}
+}
 
 void AMyCharacter::OnCollect2() {
 

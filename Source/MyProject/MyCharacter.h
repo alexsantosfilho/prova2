@@ -90,6 +90,7 @@ private:
 	void Turn(float Value);
 	void OnCollect();
 	void OnCollect2();
+	void PressChave2();
 	void Pause();
 
 	
