@@ -26,6 +26,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 		class UBehaviorTree* Behavior;
 
+	
+
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* MeshComp;

@@ -55,6 +55,12 @@ AMyCharacter::AMyCharacter()
 		FireSound = SoundCue.Object;
 	}
 
+
+	ConstructorHelpers::FObjectFinder<USoundCue>
+		Chave1c(TEXT("SoundCue'/Game/Audios/footstep-exemplo-1_Cue.footstep-exemplo-1_Cue'"));
+	if (Chave1c.Succeeded()) {
+		Chave1 = Chave1c.Object;
+	}
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
 		SkeletalMesh(TEXT("SkeletalMesh'/Game/AnimStarterPack/UE4_Mannequin/Mesh/SK_Mannequin.SK_Mannequin'"));
 	if (SkeletalMesh.Succeeded()) {
@@ -231,6 +237,8 @@ void AMyCharacter::OnCollect() {
 			Inventory.Add(ItemColetado);
 			ItemColetado->Destroy();
 			UE_LOG(LogTemp, Warning, TEXT("%d"), Inventory.Num());
+			AudioComp->SetSound(Chave1);
+			AudioComp->Play();
 		}
 		else if (AtoresColetados[i]->IsA(AAlavanca::StaticClass())) {
 			AAlavanca* Alavanca = Cast<AAlavanca>(AtoresColetados[i]);

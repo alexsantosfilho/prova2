@@ -65,6 +65,8 @@ private:
 	TSubclassOf<class UUserWidget> UserWidget;
 
 	USoundCue* FireSound;
+	USoundCue* Chave1;
+
 	UAudioComponent* AudioComp;
 
 	UPROPERTY(EditAnywhere)

@@ -26,9 +26,7 @@ void UBTService_CheckForPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 				SetValue<UBlackboardKeyType_Object>
 				(PC->EnemyKeyID, Player);
 
-			GEngine->AddOnScreenDebugMessage(
-				-1, 2.0f, FColor::Green,
-				"Player na área!");
+	
 		}
 
 

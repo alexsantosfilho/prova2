@@ -2,6 +2,7 @@
 
 #include "MyProject.h"
 #include "Item.h"
+#include "MyCharacter.h"
 
 
 // Sets default values
