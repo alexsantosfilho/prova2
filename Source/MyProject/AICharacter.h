@@ -26,10 +26,23 @@ public:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 		class UBehaviorTree* Behavior;
 
+	void SetColetavelLife2(int NewColetavelLife2);
+	int GetColetavelLife2();
 	
+	virtual void OnDeath2();
 
 private:
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* MeshComp;
+
+	float DamageAmount = 1.0f;
+
+	int ColetavelLife2 = 3;
+
+	UFUNCTION()
+		void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };

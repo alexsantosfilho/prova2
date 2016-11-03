@@ -2,7 +2,8 @@
 
 #include "MyProject.h"
 #include "ProjectActor.h"
-
+#include "AICharacter.h"
+#include "MyCharacter.h"
 
 // Sets default values
 AProjectActor::AProjectActor()
@@ -14,6 +15,8 @@ AProjectActor::AProjectActor()
 	Root = CreateDefaultSubobject<UBoxComponent>(TEXT("Root"));
 	Root->SetWorldScale3D(FVector(0.5f, 0.5f, 0.5f));
 	RootComponent = Root;
+
+	Root->OnComponentBeginOverlap.AddDynamic(this, &AProjectActor::OnOverlapBegin);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetCollisionProfileName("NoCollision");
@@ -69,3 +72,22 @@ void AProjectActor::Tick( float DeltaTime )
 
 }
 
+void AProjectActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+
+
+
+
+	if ((OtherActor != nullptr) && (OtherActor != this) &&
+		(OtherComp != nullptr) && (OtherActor->IsA(AAICharacter::StaticClass()))) {
+		
+		AAICharacter* MyCharacter = Cast<AAICharacter>(OtherActor);
+		MyCharacter->SetColetavelLife2(MyCharacter->GetColetavelLife2() - DamageAmount); // DANO NO PERSONAGEM
+		MyCharacter->OnDeath2();
+		//	MyProject2Character->OnDeath3();
+
+
+		UE_LOG(LogTemp, Warning, TEXT("bala colidio com o personagem"));
+
+	}
+
+}

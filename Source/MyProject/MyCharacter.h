@@ -60,7 +60,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UArrowComponent* ArrowComp;
 	UPROPERTY(EditAnywhere)
-	int Life = 100;
+	int Life = 3;
 
 	USphereComponent* CollectCollisionComp;
 	USphereComponent* CollectCollisionComp2;
@@ -92,6 +92,10 @@ private:
 	void OnCollect2();
 	void PressChave2();
 	void Pause();
+
+
+	float DamageAmount = 1.0f;
+
 
 	
 };

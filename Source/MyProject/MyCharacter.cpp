@@ -199,7 +199,7 @@ void AMyCharacter::OnDeath() {
 
 	if (Life <= 0) {
 		FVector InitialLocation(-60.0f, 30.0f, 350.0f);
-		Life = 100;
+		Life = 3;
 		SetActorLocation(InitialLocation);
 	}
 
