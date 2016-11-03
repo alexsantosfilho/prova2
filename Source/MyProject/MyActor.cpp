@@ -39,12 +39,6 @@ void AMyActor::Tick(float DeltaTime)
 
 }
 
-void AMyActor::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
-	//if (OtherActor && (OtherActor != this) && OtherComp)
-	//{
-		//OtherComp->AddImpulseAtLocation(AMyActor->Velocity * 100.0f, Hit.ImpactPoint);
-	//}
-}
 
 
 

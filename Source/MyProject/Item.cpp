@@ -11,12 +11,14 @@ AItem::AItem()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	MeshComp = CreateDefaultSubobject
-		<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetSimulatePhysics(true);
-	MeshComp->AttachTo(RootComponent);
+	
 
-
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>
+		AlavancaMesh(TEXT("StaticMesh'/Game/StarterContent/Props/SM_MatPreviewMesh_02.SM_MatPreviewMesh_02'"));
+	if (AlavancaMesh.Succeeded()) {
+		MeshComp->SetStaticMesh(AlavancaMesh.Object);
+	}
 
 
 }

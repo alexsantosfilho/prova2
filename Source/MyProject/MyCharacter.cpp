@@ -14,6 +14,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Alavanca.h"
 #include "Alavanca2.h"
+#include "PontoFinal.h"
+#include "AICharacter.h"
 
 
 
@@ -45,6 +47,9 @@ AMyCharacter::AMyCharacter()
 
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	GetMesh()->OnComponentHit.AddDynamic(this, &AMyCharacter::OnHit);
+
 
 	ConstructorHelpers::FClassFinder<UUserWidget>
 		Widget(TEXT("WidgetBlueprint'/Game/Blueprints/Pause.Pause_C'"));
@@ -138,6 +143,8 @@ void AMyCharacter::SetupPlayerInputComponent(class UInputComponent* InputCompone
 	InputComponent->BindAction("Collect", IE_Pressed, this, &AMyCharacter::OnCollect);
 	InputComponent->BindAction("Collect2", IE_Pressed, this, &AMyCharacter::OnCollect2);
 	InputComponent->BindAction("PressChave2", IE_Pressed, this, &AMyCharacter::PressChave2);
+	InputComponent->BindAction("PontoFinal", IE_Pressed, this, &AMyCharacter::PontoFinal);
+
 
 
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AMyCharacter::Pause);
@@ -195,15 +202,6 @@ int AMyCharacter::GetLife() {
 
 }
 
-void AMyCharacter::OnDeath() {
-
-	if (Life <= 0) {
-		FVector InitialLocation(-60.0f, 30.0f, 350.0f);
-		Life = 3;
-		SetActorLocation(InitialLocation);
-	}
-
-}
 
 
 void AMyCharacter::DropProjectActor() {
@@ -249,6 +247,8 @@ void AMyCharacter::OnCollect() {
 		else if (AtoresColetados[i]->IsA(AAlavanca::StaticClass())) {
 			AAlavanca* Alavanca = Cast<AAlavanca>(AtoresColetados[i]);
 			Alavanca->OnPressed();
+			AudioComp->SetSound(Chave1);
+			AudioComp->Play();
 		
 		}
 	}
@@ -263,10 +263,26 @@ void AMyCharacter::PressChave2() {
 		if (AtoresColetados[i]->IsA(AAlavanca2::StaticClass())) {
 			AAlavanca2* Alavanca2 = Cast<AAlavanca2>(AtoresColetados[i]);
 			Alavanca2->OnPressed2();
+			AudioComp->SetSound(Chave1);
+			AudioComp->Play();
 		}
 	}
 }
 
+void AMyCharacter::PontoFinal() {
+
+	TArray<AActor*> AtoresColetados;
+	CollectCollisionComp->GetOverlappingActors(AtoresColetados);
+
+	for (int i = 0; i < AtoresColetados.Num(); i++) {
+		if (AtoresColetados[i]->IsA(APontoFinal::StaticClass())) {
+			APontoFinal* PontoFinal = Cast<APontoFinal>(AtoresColetados[i]);
+			PontoFinal->OnPressed3();
+			AudioComp->SetSound(Chave1);
+			AudioComp->Play();
+		}
+	}
+}
 void AMyCharacter::OnCollect2() {
 
 	TArray<AActor*> Coletavelb;
@@ -280,6 +296,7 @@ void AMyCharacter::OnCollect2() {
 			Coletavel.Add(ObColetado);
 			ObColetado->Destroy();
 			UE_LOG(LogTemp, Warning, TEXT("%d"), Coletavel.Num());
+			
 			
 		}
 	
@@ -333,3 +350,22 @@ void AMyCharacter::StopCrouch()
 
 }
 
+void AMyCharacter::OnDeath() {
+	
+	UWorld* World = GetWorld();
+
+	if (Life <= 0) {
+		Life;
+		UE_LOG(LogTemp, Warning, TEXT("OnDeath no char"));
+		UGameplayStatics::OpenLevel(World, "NewMap4");
+	}
+}
+
+void AMyCharacter::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult &Hit) {
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (OtherActor->IsA(AAICharacter::StaticClass()))) {
+		AAICharacter* AICharacter = Cast<AAICharacter>(OtherActor);
+	
+		UE_LOG(LogTemp, Warning, TEXT("OnHit"));
+
+	}
+}

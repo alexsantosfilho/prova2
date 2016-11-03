@@ -3,16 +3,16 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "MyActor.generated.h"
+#include "InimigoC.generated.h"
 
 UCLASS()
-class MYPROJECT_API AMyActor:public AActor
+class MYPROJECT_API AInimigoC : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AMyActor();
+	AInimigoC();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -20,15 +20,27 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
+
 private:
 
 	UPROPERTY(EditAnywhere)
-		UShapeComponent* Root;
+		UBoxComponent* Root;
 	UPROPERTY(EditAnywhere)
 		UStaticMeshComponent* MeshComp;
+	UPROPERTY(EditAnywhere)
+		UStaticMeshComponent* MeshComp2;
+	UPROPERTY(EditAnywhere)
+		UParticleSystemComponent* Particle;
+	UPROPERTY(EditAnywhere)
+		UProjectileMovementComponent* ProjectileMovement;
+
+	float DefaultZ;
+	float DamageAmount = 1.0f;
+
 	UPROPERTY(VisibleAnywhere, Category = Tick)
 		float RunningTime;
 
-	
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };

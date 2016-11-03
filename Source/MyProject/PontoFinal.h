@@ -3,28 +3,31 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Alavanca.generated.h"
+#include "PontoFinal.generated.h"
 
 UCLASS()
-class MYPROJECT_API AAlavanca : public AActor
+class MYPROJECT_API APontoFinal : public AActor
 {
 	GENERATED_BODY()
-
-public:
+	
+public:	
 	// Sets default values for this actor's properties
-	AAlavanca();
+	APontoFinal();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 	// Called every frame
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void Tick( float DeltaSeconds ) override;
 
-	void OnPressed();
+	void OnPressed3();
 
 private:
 
 	UStaticMeshComponent* MeshComp;
 
+	UAudioComponent* AudioComp;
+
+	USoundCue* Chave1;
 
 };

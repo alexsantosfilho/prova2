@@ -28,8 +28,8 @@ public:
 	void SetLife(int NewLife);
 	int GetLife();
 	
-	FORCEINLINE int GetNewLife() const { return Life; }
-	FORCEINLINE void AMyCharacter::SetNewLife(int NewLife) { Life = NewLife; }
+	//FORCEINLINE int GetNewLife() const { return Life; }
+	//FORCEINLINE void AMyCharacter::SetNewLife(int NewLife) { Life = NewLife; }
 	FORCEINLINE TArray<class AItem*> GetInventory() const { return Inventory; }
 	FORCEINLINE TArray<class AObjeto*> GetColetavel() const { return Coletavel; }
 
@@ -46,6 +46,7 @@ public:
 	void StartCrouch();
 	void StopCrouch();
 
+//	void OnDeath();
 
 	
 private: 
@@ -91,11 +92,21 @@ private:
 	void OnCollect();
 	void OnCollect2();
 	void PressChave2();
+	void PontoFinal();
+
 	void Pause();
 
 
 	float DamageAmount = 1.0f;
 
+
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult &Hit);
+
+
+
+	//UFUNCTION()
+	//	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	
 };
